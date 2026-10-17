@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: order-tracker
+
+  datasource:
+    url: jdbc:sqlite:${DB_PATH:./data/foody.db}
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      # SQLite aceita apenas um escritor por vez; uma conexão evita SQLITE_BUSY
+      maximum-pool-size: 1
+
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    open-in-view: false
+    hibernate:
+      # Schema é responsabilidade do Flyway; o Hibernate apenas valida
+      ddl-auto: validate
+
+  flyway:
+    locations: classpath:db/migration
+
+server:
+  port: ${SERVER_PORT:8080}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+  # Esconde os endpoints do Actuator da documentação
+  show-actuator: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

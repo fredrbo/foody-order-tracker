@@ -1,0 +1,21 @@
+### Sistema operacional ###
+.DS_Store
+Thumbs.db
+desktop.ini
+
+### Variáveis de ambiente / segredos ###
+.env
+.env.*
+!.env.example
+
+### Logs ###
+*.log
+logs/
+
+### IntelliJ IDEA ###
+.idea/
+
+### VS Code (versiona só a config de execução compartilhada) ###
+.vscode/*
+!.vscode/launch.json
+!.vscode/extensions.json
