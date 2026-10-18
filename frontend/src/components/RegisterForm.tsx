@@ -83,14 +83,14 @@ export function RegisterForm({ onRegistered, onBackToLogin }: RegisterFormProps)
       <button
         type="submit"
         disabled={loading}
-        className="mt-8 h-11 w-full rounded-md bg-indigo-500 font-medium text-white transition hover:bg-indigo-600 disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-8 h-11 w-full rounded-md bg-brand-500 font-medium text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? 'Criando conta...' : 'Criar conta'}
       </button>
 
       <p className="mt-12 text-center text-sm text-gray-500">
         Já tem uma conta?{' '}
-        <button type="button" onClick={onBackToLogin} className="font-medium text-indigo-500 hover:text-indigo-600">
+        <button type="button" onClick={onBackToLogin} className="font-medium text-brand-500 hover:text-brand-600">
           Faça login
         </button>
       </p>

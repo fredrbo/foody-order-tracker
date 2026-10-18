@@ -78,14 +78,14 @@ export function LoginForm({ initialEmail = '', successMessage, onLogin, onCreate
       <button
         type="submit"
         disabled={loading}
-        className="mt-8 h-11 w-full rounded-md bg-indigo-500 font-medium text-white transition hover:bg-indigo-600 disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-8 h-11 w-full rounded-md bg-brand-500 font-medium text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? 'Entrando...' : 'Entrar'}
       </button>
 
       <p className="mt-12 text-center text-sm text-gray-500">
         Não tem conta ainda?{' '}
-        <button type="button" onClick={onCreateAccount} className="font-medium text-indigo-500 hover:text-indigo-600">
+        <button type="button" onClick={onCreateAccount} className="font-medium text-brand-500 hover:text-brand-600">
           Crie agora
         </button>
       </p>

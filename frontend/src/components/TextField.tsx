@@ -34,7 +34,7 @@ export function TextField({ label, icon, endAdornment, error, className, ...inpu
             ${icon ? 'pl-9' : 'pl-3'} ${endAdornment ? 'pr-10' : 'pr-3'}
             ${error
               ? 'border-red-400 focus:border-red-500 focus:ring-red-500'
-              : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'}`}
+              : 'border-gray-300 focus:border-brand-500 focus:ring-brand-500'}`}
           {...inputProps}
         />
 
