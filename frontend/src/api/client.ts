@@ -1,3 +1,5 @@
+import { getToken } from '../auth/token'
+
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080'
 
 type FieldErrors = Record<string, string>
@@ -16,10 +18,10 @@ export class ApiError extends Error {
 type RequestOptions = {
   method?: string
   body?: unknown
-  token?: string | null
 }
 
-export async function apiRequest<T>(path: string, { method = 'GET', body, token }: RequestOptions = {}): Promise<T> {
+export async function apiRequest<T>(path: string, { method = 'GET', body }: RequestOptions = {}): Promise<T> {
+  const token = getToken()
   const headers: Record<string, string> = {}
   if (body !== undefined) headers['Content-Type'] = 'application/json'
   if (token) headers['Authorization'] = `Bearer ${token}`

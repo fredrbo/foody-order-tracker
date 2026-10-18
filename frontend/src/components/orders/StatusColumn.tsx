@@ -5,11 +5,13 @@ import { OrderCard } from './OrderCard'
 type StatusColumnProps = {
   status: OrderStatus
   orders: Order[]
+  highlightedIds: Set<number>
+  pendingIds: Set<number>
   onAdvance: (order: Order) => void
   onCancel: (order: Order) => void
 }
 
-export function StatusColumn({ status, orders, onAdvance, onCancel }: StatusColumnProps) {
+export function StatusColumn({ status, orders, highlightedIds, pendingIds, onAdvance, onCancel }: StatusColumnProps) {
   const config = STATUS_CONFIG[status]
 
   return (
@@ -25,7 +27,14 @@ export function StatusColumn({ status, orders, onAdvance, onCancel }: StatusColu
       <div className="flex flex-1 flex-col gap-3">
         {orders.length > 0 ? (
           orders.map((order) => (
-            <OrderCard key={order.id} order={order} onAdvance={onAdvance} onCancel={onCancel} />
+            <OrderCard
+              key={order.id}
+              order={order}
+              highlighted={highlightedIds.has(order.id)}
+              pending={pendingIds.has(order.id)}
+              onAdvance={onAdvance}
+              onCancel={onCancel}
+            />
           ))
         ) : (
           <p className="rounded-xl border border-dashed border-gray-300 px-3 py-6 text-center text-xs text-gray-400">

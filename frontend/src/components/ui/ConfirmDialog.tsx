@@ -1,14 +1,29 @@
-import { AlertTriangle } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { AlertTriangle, ArrowRight } from 'lucide-react'
 import { Modal } from './Modal'
 
 type ConfirmDialogProps = {
   open: boolean
   title: string
-  description: string
+  description: ReactNode
   confirmLabel: string
   cancelLabel?: string
+  variant?: 'danger' | 'primary'
   onConfirm: () => void
   onCancel: () => void
+}
+
+const VARIANTS = {
+  danger: {
+    icon: AlertTriangle,
+    iconClass: 'bg-rose-50 text-rose-600',
+    buttonClass: 'bg-rose-600 hover:bg-rose-700',
+  },
+  primary: {
+    icon: ArrowRight,
+    iconClass: 'bg-brand-50 text-brand-600',
+    buttonClass: 'bg-brand-500 hover:bg-brand-600',
+  },
 }
 
 export function ConfirmDialog({
@@ -17,9 +32,12 @@ export function ConfirmDialog({
   description,
   confirmLabel,
   cancelLabel = 'Voltar',
+  variant = 'danger',
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  const { icon: Icon, iconClass, buttonClass } = VARIANTS[variant]
+
   return (
     <Modal
       open={open}
@@ -38,7 +56,7 @@ export function ConfirmDialog({
           <button
             type="button"
             onClick={onConfirm}
-            className="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-rose-700"
+            className={`rounded-lg px-4 py-2 text-sm font-medium text-white transition ${buttonClass}`}
           >
             {confirmLabel}
           </button>
@@ -46,8 +64,8 @@ export function ConfirmDialog({
       }
     >
       <div className="flex gap-3">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-600">
-          <AlertTriangle size={18} />
+        <span className={`flex size-9 shrink-0 items-center justify-center rounded-full ${iconClass}`}>
+          <Icon size={18} />
         </span>
         <p className="text-sm leading-relaxed text-gray-600">{description}</p>
       </div>
