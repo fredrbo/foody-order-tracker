@@ -3,6 +3,7 @@ package com.foody.ordertracker.service;
 import com.foody.ordertracker.dto.OrderItemRequest;
 import com.foody.ordertracker.dto.OrderRequest;
 import com.foody.ordertracker.dto.OrderResponse;
+import com.foody.ordertracker.exception.ResourceNotFoundException;
 import com.foody.ordertracker.model.Order;
 import com.foody.ordertracker.model.OrderItem;
 import com.foody.ordertracker.model.OrderStatus;
@@ -44,5 +45,12 @@ public class OrderService {
         return orderRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(OrderResponse::from)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public OrderResponse findById(Long id) {
+        return orderRepository.findWithItemsById(id)
+                .map(OrderResponse::from)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido", id));
     }
 }
