@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Locale;
 
 @Service
-public class UserService implements IUserService {
+public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -22,7 +22,6 @@ public class UserService implements IUserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
     @Transactional
     public UserResponse create(UserRequest request) {
         String email = request.email().trim().toLowerCase(Locale.ROOT);
