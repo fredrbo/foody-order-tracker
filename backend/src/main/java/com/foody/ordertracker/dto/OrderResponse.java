@@ -14,7 +14,8 @@ public record OrderResponse(
         OrderStatus status,
         List<OrderItemResponse> items,
         BigDecimal total,
-        Instant createdAt
+        Instant createdAt,
+        Instant updatedAt
 ) {
 
     public static OrderResponse from(Order order) {
@@ -22,6 +23,6 @@ public record OrderResponse(
                 .map(OrderItemResponse::from)
                 .toList();
         return new OrderResponse(order.getId(), order.getCustomerName(), order.getDeliveryAddress(),
-                order.getStatus(), items, order.getTotal(), order.getCreatedAt());
+                order.getStatus(), items, order.getTotal(), order.getCreatedAt(), order.getUpdatedAt());
     }
 }

@@ -3,6 +3,8 @@ package com.foody.ordertracker.service;
 import com.foody.ordertracker.dto.OrderItemRequest;
 import com.foody.ordertracker.dto.OrderRequest;
 import com.foody.ordertracker.dto.OrderResponse;
+import com.foody.ordertracker.dto.OrderStatusRequest;
+import com.foody.ordertracker.exception.InvalidStatusTransitionException;
 import com.foody.ordertracker.exception.ResourceNotFoundException;
 import com.foody.ordertracker.model.Order;
 import com.foody.ordertracker.model.OrderItem;
@@ -52,5 +54,18 @@ public class OrderService {
         return orderRepository.findWithItemsById(id)
                 .map(OrderResponse::from)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido", id));
+    }
+
+    @Transactional
+    public OrderResponse updateStatus(Long id, OrderStatusRequest request) {
+        Order order = orderRepository.findWithItemsById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido", id));
+
+        if (request.status() != order.getStatus().next()) {
+            throw new InvalidStatusTransitionException(order.getStatus(), request.status());
+        }
+
+        order.setStatus(request.status());
+        return OrderResponse.from(orderRepository.saveAndFlush(order));
     }
 }

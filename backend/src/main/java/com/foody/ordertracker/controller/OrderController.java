@@ -2,10 +2,12 @@ package com.foody.ordertracker.controller;
 
 import com.foody.ordertracker.dto.OrderRequest;
 import com.foody.ordertracker.dto.OrderResponse;
+import com.foody.ordertracker.dto.OrderStatusRequest;
 import com.foody.ordertracker.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,5 +41,10 @@ public class OrderController {
     @GetMapping("/{id}")
     public OrderResponse findById(@PathVariable Long id) {
         return orderService.findById(id);
+    }
+
+    @PatchMapping("/{id}/status")
+    public OrderResponse updateStatus(@PathVariable Long id, @Valid @RequestBody OrderStatusRequest request) {
+        return orderService.updateStatus(id, request);
     }
 }

@@ -17,4 +17,13 @@ public enum OrderStatus {
     OrderStatus(int code) {
         this.code = code;
     }
+
+    public OrderStatus next() {
+        return switch (this) {
+            case RECEBIDO -> EM_PREPARO;
+            case EM_PREPARO -> SAIU_PARA_ENTREGA;
+            case SAIU_PARA_ENTREGA -> ENTREGUE;
+            case ENTREGUE, CANCELADO -> null;
+        };
+    }
 }
