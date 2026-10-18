@@ -13,6 +13,14 @@
   --color-brand-700: #ba2f2f;
 
   --animate-toast-in: toast-in 200ms ease-out;
+  --animate-new-order: new-order 1s ease-out 3;
+
+  @keyframes new-order {
+    50% {
+      transform: scale(1.02);
+      box-shadow: 0 0 0 6px var(--color-brand-100);
+    }
+  }
 
   @keyframes toast-in {
     from {

@@ -1,30 +1,38 @@
-import { AlertCircle, ArrowRight, Clock, MapPin } from 'lucide-react'
+import { AlertCircle, ArrowRight, Clock, Loader2, MapPin } from 'lucide-react'
 import { CANCELLABLE_STATUSES, STATUS_CONFIG, getNextStatus, isDelayed } from '../../constants/orderStatus'
-import { PAYMENT_CONFIG } from '../../constants/paymentMethod'
 import type { Order } from '../../types/order'
 import { formatCurrency, formatRelativeTime } from '../../utils/format'
 
 type OrderCardProps = {
   order: Order
+  highlighted?: boolean
+  pending?: boolean
   onAdvance: (order: Order) => void
   onCancel: (order: Order) => void
 }
 
-export function OrderCard({ order, onAdvance, onCancel }: OrderCardProps) {
+export function OrderCard({ order, highlighted = false, pending = false, onAdvance, onCancel }: OrderCardProps) {
   const isCanceled = order.status === 'CANCELADO'
   const delayed = isDelayed(order)
   const nextStatus = getNextStatus(order.status)
   const canCancel = CANCELLABLE_STATUSES.includes(order.status)
-  const payment = PAYMENT_CONFIG[order.paymentMethod]
 
   return (
     <article
       className={`rounded-xl border p-4 shadow-xs
         ${delayed ? 'border-rose-300 bg-rose-50' : 'border-gray-200 bg-white'}
-        ${isCanceled ? 'opacity-70' : ''}`}
+        ${isCanceled ? 'opacity-70' : ''}
+        ${highlighted ? 'animate-new-order ring-2 ring-brand-400' : ''}`}
     >
       <div className="mb-3 flex items-center justify-between">
-        <span className="font-mono text-xs font-semibold text-gray-400">#{order.id}</span>
+        <span className="flex items-center gap-2">
+          <span className="font-mono text-xs font-semibold text-gray-400">#{order.id}</span>
+          {highlighted && (
+            <span className="rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+              Novo
+            </span>
+          )}
+        </span>
         {delayed ? (
           <span className="flex items-center gap-1 rounded-full bg-rose-100 px-2 py-0.5 text-xs font-medium text-rose-700">
             <AlertCircle size={12} />
@@ -53,13 +61,7 @@ export function OrderCard({ order, onAdvance, onCancel }: OrderCardProps) {
       </ul>
 
       <div className="mt-3 flex items-center justify-between">
-        <span
-          className="flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600"
-          title={`Pagamento: ${payment.label}`}
-        >
-          <payment.icon size={14} />
-          {payment.label}
-        </span>
+        <span className="text-xs text-gray-500">Total</span>
         <span className={`font-semibold text-gray-900 ${isCanceled ? 'line-through' : ''}`}>
           {formatCurrency(order.total)}
         </span>
@@ -71,7 +73,8 @@ export function OrderCard({ order, onAdvance, onCancel }: OrderCardProps) {
             <button
               type="button"
               onClick={() => onCancel(order)}
-              className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-rose-600 transition hover:border-rose-200 hover:bg-rose-50"
+              disabled={pending}
+              className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-rose-600 transition hover:border-rose-200 hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Cancelar
             </button>
@@ -81,10 +84,20 @@ export function OrderCard({ order, onAdvance, onCancel }: OrderCardProps) {
               type="button"
               onClick={() => onAdvance(order)}
               title={`Avançar para ${STATUS_CONFIG[nextStatus].label}`}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-brand-500 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-brand-600"
+              disabled={pending}
+              className="ml-auto flex items-center gap-1.5 rounded-lg bg-brand-500 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Avançar
-              <ArrowRight size={15} />
+              {pending ? (
+                <>
+                  <Loader2 size={15} className="animate-spin" />
+                  Avançando…
+                </>
+              ) : (
+                <>
+                  Avançar
+                  <ArrowRight size={15} />
+                </>
+              )}
             </button>
           )}
         </div>
