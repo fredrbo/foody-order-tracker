@@ -22,6 +22,8 @@ spring:
 
   flyway:
     locations: classpath:db/migration
+    # Um banco populado pelo perfil demo continua subindo sem ele
+    ignore-migration-patterns: "*:missing,*:future"
 
 jwt:
   secret: ${JWT_SECRET:dev-only-secret-troque-em-producao-0123456789}
