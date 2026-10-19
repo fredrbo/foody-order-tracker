@@ -16,3 +16,12 @@ export function formatRelativeTime(isoDate: string) {
 
   return relativeFormatter.format(Math.round(diffInHours / 24), 'day')
 }
+
+export function maskCurrency(value: string) {
+  const digits = value.replace(/\D/g, '').slice(0, 10)
+  return digits ? formatCurrency(Number(digits) / 100) : ''
+}
+
+export function parseCurrency(value: string) {
+  return Number(value.replace(/\D/g, '')) / 100
+}

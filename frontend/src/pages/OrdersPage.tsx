@@ -1,8 +1,9 @@
 import { useCallback, useState } from 'react'
-import { Loader2, RefreshCw, WifiOff } from 'lucide-react'
+import { Loader2, Plus, RefreshCw, WifiOff } from 'lucide-react'
 import { ApiError } from '../api/client'
 import { updateOrderStatus } from '../api/orders'
 import { Header } from '../components/Header'
+import { NewOrderModal } from '../components/orders/NewOrderModal'
 import { StatusColumn } from '../components/orders/StatusColumn'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { ORDER_STATUSES, STATUS_CONFIG, getNextStatus } from '../constants/orderStatus'
@@ -26,6 +27,7 @@ export function OrdersPage({ onLogout, onSessionExpired }: OrdersPageProps) {
   const toast = useToast()
   const [orderToAdvance, setOrderToAdvance] = useState<Order | null>(null)
   const [orderToCancel, setOrderToCancel] = useState<Order | null>(null)
+  const [newOrderOpen, setNewOrderOpen] = useState(false)
   const [highlightedIds, setHighlightedIds] = useState<Set<number>>(new Set())
   const [pendingIds, setPendingIds] = useState<Set<number>>(new Set())
 
@@ -43,7 +45,7 @@ export function OrdersPage({ onLogout, onSessionExpired }: OrdersPageProps) {
     [toast],
   )
 
-  const { orders, setOrders, loading, error, lastUpdatedAt, reload } = useOrders({
+  const { orders, setOrders, addOrder, loading, error, lastUpdatedAt, reload } = useOrders({
     onNewOrders: handleNewOrders,
     onUnauthorized: onSessionExpired,
   })
@@ -70,6 +72,12 @@ export function OrdersPage({ onLogout, onSessionExpired }: OrdersPageProps) {
         return next
       })
     }
+  }
+
+  function handleCreated(order: Order) {
+    addOrder(order)
+    setNewOrderOpen(false)
+    toast.success(`Pedido #${order.id} criado para ${order.customerName}.`)
   }
 
   function handleConfirmAdvance() {
@@ -108,17 +116,28 @@ export function OrdersPage({ onLogout, onSessionExpired }: OrdersPageProps) {
             )}
           </div>
 
-          {lastUpdatedAt && (
-            <p
-              className={`flex items-center gap-1.5 text-xs ${error ? 'text-rose-600' : 'text-gray-400'}`}
-              title="A lista é atualizada automaticamente a cada 10 segundos"
+          <div className="flex flex-wrap items-center gap-4">
+            {lastUpdatedAt && (
+              <p
+                className={`flex items-center gap-1.5 text-xs ${error ? 'text-rose-600' : 'text-gray-400'}`}
+                title="A lista é atualizada automaticamente a cada 10 segundos"
+              >
+                {error ? <WifiOff size={13} /> : <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />}
+                {error
+                  ? 'Falha ao atualizar, tentando novamente…'
+                  : `Atualizado às ${lastUpdatedAt.toLocaleTimeString('pt-BR')}`}
+              </p>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setNewOrderOpen(true)}
+              className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-600"
             >
-              {error ? <WifiOff size={13} /> : <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />}
-              {error
-                ? 'Falha ao atualizar, tentando novamente…'
-                : `Atualizado às ${lastUpdatedAt.toLocaleTimeString('pt-BR')}`}
-            </p>
-          )}
+              <Plus size={16} />
+              Novo pedido
+            </button>
+          </div>
         </div>
 
         {loading ? (
@@ -155,6 +174,13 @@ export function OrdersPage({ onLogout, onSessionExpired }: OrdersPageProps) {
           </div>
         )}
       </main>
+
+      <NewOrderModal
+        open={newOrderOpen}
+        onClose={() => setNewOrderOpen(false)}
+        onCreated={handleCreated}
+        onUnauthorized={onSessionExpired}
+      />
 
       <ConfirmDialog
         open={orderToAdvance !== null}

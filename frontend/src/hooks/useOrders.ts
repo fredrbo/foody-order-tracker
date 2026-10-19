@@ -77,5 +77,10 @@ export function useOrders({ onNewOrders, onUnauthorized }: UseOrdersOptions) {
     }
   }, [load])
 
-  return { orders, setOrders, loading, error, lastUpdatedAt, reload: load }
+  const addOrder = useCallback((order: Order) => {
+    knownIds.current?.add(order.id)
+    setOrders((current) => [order, ...current])
+  }, [])
+
+  return { orders, setOrders, addOrder, loading, error, lastUpdatedAt, reload: load }
 }
