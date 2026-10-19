@@ -25,3 +25,9 @@ export function maskCurrency(value: string) {
 export function parseCurrency(value: string) {
   return Number(value.replace(/\D/g, '')) / 100
 }
+
+const dateTimeFormatter = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
+
+export function formatDateTime(isoDate: string) {
+  return dateTimeFormatter.format(new Date(isoDate))
+}

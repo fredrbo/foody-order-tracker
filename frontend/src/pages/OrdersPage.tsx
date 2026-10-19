@@ -4,6 +4,7 @@ import { ApiError } from '../api/client'
 import { updateOrderStatus } from '../api/orders'
 import { Header } from '../components/Header'
 import { NewOrderModal } from '../components/orders/NewOrderModal'
+import { OrderDetailsModal } from '../components/orders/OrderDetailsModal'
 import { StatusColumn } from '../components/orders/StatusColumn'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { ORDER_STATUSES, STATUS_CONFIG, getNextStatus } from '../constants/orderStatus'
@@ -28,6 +29,7 @@ export function OrdersPage({ onLogout, onSessionExpired }: OrdersPageProps) {
   const [orderToAdvance, setOrderToAdvance] = useState<Order | null>(null)
   const [orderToCancel, setOrderToCancel] = useState<Order | null>(null)
   const [newOrderOpen, setNewOrderOpen] = useState(false)
+  const [detailsOrderId, setDetailsOrderId] = useState<number | null>(null)
   const [highlightedIds, setHighlightedIds] = useState<Set<number>>(new Set())
   const [pendingIds, setPendingIds] = useState<Set<number>>(new Set())
 
@@ -167,6 +169,7 @@ export function OrdersPage({ onLogout, onSessionExpired }: OrdersPageProps) {
                 orders={orders.filter((order) => order.status === status).sort(byOldestFirst)}
                 highlightedIds={highlightedIds}
                 pendingIds={pendingIds}
+                onOpen={(order) => setDetailsOrderId(order.id)}
                 onAdvance={setOrderToAdvance}
                 onCancel={setOrderToCancel}
               />
@@ -174,6 +177,21 @@ export function OrdersPage({ onLogout, onSessionExpired }: OrdersPageProps) {
           </div>
         )}
       </main>
+
+      <OrderDetailsModal
+        key={detailsOrderId ?? 'closed'}
+        orderId={detailsOrderId}
+        onClose={() => setDetailsOrderId(null)}
+        onAdvance={(order) => {
+          setDetailsOrderId(null)
+          setOrderToAdvance(order)
+        }}
+        onCancel={(order) => {
+          setDetailsOrderId(null)
+          setOrderToCancel(order)
+        }}
+        onUnauthorized={onSessionExpired}
+      />
 
       <NewOrderModal
         open={newOrderOpen}

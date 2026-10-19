@@ -5,6 +5,10 @@ export function fetchOrders() {
   return apiRequest<Order[]>('/api/orders')
 }
 
+export function fetchOrder(id: number) {
+  return apiRequest<Order>(`/api/orders/${id}`)
+}
+
 export type NewOrder = {
   customerName: string
   deliveryAddress: string
