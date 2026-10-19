@@ -99,6 +99,17 @@ class OrderServiceTest {
         verify(orderRepository, never()).saveAndFlush(any());
     }
 
+
+    @Test
+    void shouldRejectCancelWhenOrderIsOutForDelivery() {
+        when(orderRepository.findWithItemsById(1L)).thenReturn(Optional.of(order(1L, OrderStatus.SAIU_PARA_ENTREGA)));
+
+        assertThatThrownBy(() -> orderService.updateStatus(1L, new OrderStatusRequest(OrderStatus.CANCELADO)))
+                .isInstanceOf(InvalidStatusTransitionException.class)
+                .hasMessage("Não é possível alterar o status de SAIU_PARA_ENTREGA para CANCELADO.");
+        verify(orderRepository, never()).saveAndFlush(any());
+    }
+
     @Test
     void shouldThrowNotFoundWhenUpdatingMissingOrder() {
         when(orderRepository.findWithItemsById(99L)).thenReturn(Optional.empty());

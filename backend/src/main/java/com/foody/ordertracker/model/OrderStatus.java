@@ -26,4 +26,11 @@ public enum OrderStatus {
             case ENTREGUE, CANCELADO -> null;
         };
     }
+
+    public boolean canTransitionTo(OrderStatus target) {
+        if (target == CANCELADO) {
+            return this == RECEBIDO || this == EM_PREPARO;
+        }
+        return target == next();
+    }
 }

@@ -90,7 +90,7 @@ export function OrderCard({ order, highlighted = false, pending = false, onAdvan
               {pending ? (
                 <>
                   <Loader2 size={15} className="animate-spin" />
-                  Avançando…
+                  Salvando…
                 </>
               ) : (
                 <>

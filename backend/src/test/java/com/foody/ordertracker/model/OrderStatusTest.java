@@ -34,4 +34,24 @@ class OrderStatusTest {
     void shouldNotAdvanceFromCancelado() {
         assertThat(OrderStatus.CANCELADO.next()).isNull();
     }
+
+    @Test
+    void shouldAllowTransitionToNextStatus() {
+        assertThat(OrderStatus.RECEBIDO.canTransitionTo(OrderStatus.EM_PREPARO)).isTrue();
+    }
+
+    @Test
+    void shouldNotAllowSkippingStatuses() {
+        assertThat(OrderStatus.RECEBIDO.canTransitionTo(OrderStatus.ENTREGUE)).isFalse();
+    }
+
+    @Test
+    void shouldAllowCancelFromRecebido() {
+        assertThat(OrderStatus.RECEBIDO.canTransitionTo(OrderStatus.CANCELADO)).isTrue();
+    }
+
+    @Test
+    void shouldNotAllowCancelFromSaiuParaEntrega() {
+        assertThat(OrderStatus.SAIU_PARA_ENTREGA.canTransitionTo(OrderStatus.CANCELADO)).isFalse();
+    }
 }

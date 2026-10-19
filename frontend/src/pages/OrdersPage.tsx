@@ -50,26 +50,12 @@ export function OrdersPage({ onLogout, onSessionExpired }: OrdersPageProps) {
 
   const inProgress = orders.filter((order) => order.status !== 'ENTREGUE' && order.status !== 'CANCELADO').length
 
-  function updateStatus(orderId: number, status: OrderStatus) {
-    setOrders((current) =>
-      current.map((order) =>
-        order.id === orderId ? { ...order, status, updatedAt: new Date().toISOString() } : order,
-      ),
-    )
-  }
-
-  async function handleConfirmAdvance() {
-    const order = orderToAdvance
-    if (!order) return
-    const nextStatus = getNextStatus(order.status)
-    setOrderToAdvance(null)
-    if (!nextStatus) return
-
+  async function changeStatus(order: Order, status: OrderStatus, successMessage: string) {
     setPendingIds((current) => new Set(current).add(order.id))
     try {
-      const updated = await updateOrderStatus(order.id, nextStatus)
+      const updated = await updateOrderStatus(order.id, status)
       setOrders((current) => current.map((item) => (item.id === updated.id ? updated : item)))
-      toast.success(`Pedido #${order.id} avançou para ${STATUS_CONFIG[nextStatus].label}.`)
+      toast.success(successMessage)
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         onSessionExpired()
@@ -86,12 +72,22 @@ export function OrdersPage({ onLogout, onSessionExpired }: OrdersPageProps) {
     }
   }
 
-  function handleConfirmCancel() {
-    if (!orderToCancel) return
+  function handleConfirmAdvance() {
+    const order = orderToAdvance
+    if (!order) return
+    const nextStatus = getNextStatus(order.status)
+    setOrderToAdvance(null)
+    if (!nextStatus) return
 
-    updateStatus(orderToCancel.id, 'CANCELADO')
+    void changeStatus(order, nextStatus, `Pedido #${order.id} avançou para ${STATUS_CONFIG[nextStatus].label}.`)
+  }
+
+  function handleConfirmCancel() {
+    const order = orderToCancel
+    if (!order) return
     setOrderToCancel(null)
-    toast.success(`Pedido #${orderToCancel.id} cancelado.`)
+
+    void changeStatus(order, 'CANCELADO', `Pedido #${order.id} cancelado.`)
   }
 
   const firstLoadFailed = error !== null && lastUpdatedAt === null
