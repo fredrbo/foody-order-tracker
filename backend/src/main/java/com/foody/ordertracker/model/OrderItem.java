@@ -41,7 +41,7 @@ public class OrderItem {
     private BigDecimal unitPrice;
 
     public BigDecimal getSubtotal() {
-        return unitPrice;
+        return unitPrice.multiply(BigDecimal.valueOf(quantity));
     }
 
     @PostLoad
