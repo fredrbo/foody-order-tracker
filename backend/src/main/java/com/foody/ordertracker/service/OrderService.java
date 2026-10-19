@@ -61,7 +61,7 @@ public class OrderService {
         Order order = orderRepository.findWithItemsById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido", id));
 
-        if (request.status() != order.getStatus().next()) {
+        if (!order.getStatus().canTransitionTo(request.status())) {
             throw new InvalidStatusTransitionException(order.getStatus(), request.status());
         }
 
