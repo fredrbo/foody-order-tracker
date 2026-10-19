@@ -7,11 +7,12 @@ type StatusColumnProps = {
   orders: Order[]
   highlightedIds: Set<number>
   pendingIds: Set<number>
+  onOpen: (order: Order) => void
   onAdvance: (order: Order) => void
   onCancel: (order: Order) => void
 }
 
-export function StatusColumn({ status, orders, highlightedIds, pendingIds, onAdvance, onCancel }: StatusColumnProps) {
+export function StatusColumn({ status, orders, highlightedIds, pendingIds, onOpen, onAdvance, onCancel }: StatusColumnProps) {
   const config = STATUS_CONFIG[status]
 
   return (
@@ -32,6 +33,7 @@ export function StatusColumn({ status, orders, highlightedIds, pendingIds, onAdv
               order={order}
               highlighted={highlightedIds.has(order.id)}
               pending={pendingIds.has(order.id)}
+              onOpen={onOpen}
               onAdvance={onAdvance}
               onCancel={onCancel}
             />

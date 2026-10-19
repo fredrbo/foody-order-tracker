@@ -7,11 +7,12 @@ type OrderCardProps = {
   order: Order
   highlighted?: boolean
   pending?: boolean
+  onOpen: (order: Order) => void
   onAdvance: (order: Order) => void
   onCancel: (order: Order) => void
 }
 
-export function OrderCard({ order, highlighted = false, pending = false, onAdvance, onCancel }: OrderCardProps) {
+export function OrderCard({ order, highlighted = false, pending = false, onOpen, onAdvance, onCancel }: OrderCardProps) {
   const isCanceled = order.status === 'CANCELADO'
   const delayed = isDelayed(order)
   const nextStatus = getNextStatus(order.status)
@@ -19,7 +20,8 @@ export function OrderCard({ order, highlighted = false, pending = false, onAdvan
 
   return (
     <article
-      className={`rounded-xl border p-4 shadow-xs
+      onClick={() => onOpen(order)}
+      className={`cursor-pointer rounded-xl border p-4 shadow-xs transition hover:shadow-md
         ${delayed ? 'border-rose-300 bg-rose-50' : 'border-gray-200 bg-white'}
         ${isCanceled ? 'opacity-70' : ''}
         ${highlighted ? 'animate-new-order ring-2 ring-brand-400' : ''}`}
@@ -72,7 +74,10 @@ export function OrderCard({ order, highlighted = false, pending = false, onAdvan
           {canCancel && (
             <button
               type="button"
-              onClick={() => onCancel(order)}
+              onClick={(event) => {
+                event.stopPropagation()
+                onCancel(order)
+              }}
               disabled={pending}
               className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-rose-600 transition hover:border-rose-200 hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
@@ -82,7 +87,10 @@ export function OrderCard({ order, highlighted = false, pending = false, onAdvan
           {nextStatus && (
             <button
               type="button"
-              onClick={() => onAdvance(order)}
+              onClick={(event) => {
+                event.stopPropagation()
+                onAdvance(order)
+              }}
               title={`Avançar para ${STATUS_CONFIG[nextStatus].label}`}
               disabled={pending}
               className="ml-auto flex items-center gap-1.5 rounded-lg bg-brand-500 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
