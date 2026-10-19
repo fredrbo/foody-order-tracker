@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Mail, User } from 'lucide-react'
 import { register } from '../api/auth'
 import { ApiError } from '../api/client'
+import { validateEmail } from '../utils/validation'
 import { PasswordField } from './PasswordField'
 import { TextField } from './TextField'
 
@@ -14,12 +15,21 @@ export function RegisterForm({ onRegistered, onBackToLogin }: RegisterFormProps)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [emailError, setEmailError] = useState<string>()
   const [error, setError] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
 
+  function handleEmailChange(value: string) {
+    setEmail(value)
+    if (emailError) setEmailError(validateEmail(value))
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    const invalidEmail = validateEmail(email)
+    setEmailError(invalidEmail)
+    if (invalidEmail) return
     setError(null)
     setFieldErrors({})
     setLoading(true)
@@ -40,7 +50,7 @@ export function RegisterForm({ onRegistered, onBackToLogin }: RegisterFormProps)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
+    <form onSubmit={handleSubmit} noValidate className="w-full">
       <h1 className="mb-10 text-center text-3xl font-bold text-gray-900">Crie sua conta</h1>
 
       <div className="space-y-6">
@@ -62,8 +72,9 @@ export function RegisterForm({ onRegistered, onBackToLogin }: RegisterFormProps)
           autoComplete="email"
           icon={<Mail size={16} />}
           value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          error={fieldErrors.email}
+          onChange={(event) => handleEmailChange(event.target.value)}
+          onBlur={() => setEmailError(validateEmail(email))}
+          error={emailError ?? fieldErrors.email}
           required
         />
 
