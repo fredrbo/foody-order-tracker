@@ -5,6 +5,7 @@ import { updateOrderStatus } from '../api/orders'
 import { Header } from '../components/Header'
 import { NewOrderModal } from '../components/orders/NewOrderModal'
 import { OrderDetailsModal } from '../components/orders/OrderDetailsModal'
+import { OrderSearch } from '../components/orders/OrderSearch'
 import { StatusColumn } from '../components/orders/StatusColumn'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { ORDER_STATUSES, STATUS_CONFIG, getNextStatus } from '../constants/orderStatus'
@@ -116,6 +117,7 @@ export function OrdersPage({ onLogout, onSessionExpired }: OrdersPageProps) {
                 {orders.length} pedidos · {inProgress} em andamento
               </p>
             )}
+            <OrderSearch onSearch={setDetailsOrderId} />
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
